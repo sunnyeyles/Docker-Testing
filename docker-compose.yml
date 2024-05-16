@@ -1,0 +1,60 @@
+services:
+  fastapi:
+    container_name: fastapi
+    image: datascientest/fastapi:1.0.0
+    ports:
+      - '8000:8000'
+    networks:
+      - exam_network
+
+  test_status:
+    container_name: test_status_container
+    build:
+      context: ./statusTest
+      dockerfile: Dockerfile
+    volumes:
+      - ./statusTest/output/:/app/output/
+    depends_on:
+      - fastapi
+    networks:
+      - exam_network
+
+  test_authorization:
+    container_name: test_authorization_container
+    build:
+      context: ./authorizationTest
+      dockerfile: Dockerfile
+    volumes:
+      - ./authorizationTest/:/app/output/
+    depends_on:
+      - fastapi
+    networks:
+      - exam_network
+
+  test_authentication:
+    container_name: test_authentication_container
+    build:
+      context: ./authenticationTest
+      dockerfile: Dockerfile
+    volumes:
+      - ./authenticationTest/output/:/app/output/
+    depends_on:
+      - fastapi
+    networks:
+      - exam_network
+
+  test_content:
+    container_name: test_content_container
+    build:
+      context: ./contentTest
+      dockerfile: Dockerfile
+    volumes:
+      - ./statusTest/output:/app/output
+    depends_on:
+      - fastapi
+    networks:
+      - exam_network
+
+networks:
+  exam_network:
+    driver: bridge
